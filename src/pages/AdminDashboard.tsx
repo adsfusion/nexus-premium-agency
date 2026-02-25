@@ -95,37 +95,37 @@ export default function AdminDashboard() {
     const unreadCount = notifications.filter(n => !n.read).length;
 
     return (
-        <div className="min-h-screen bg-[#0F0F23] text-white">
+        <div className="min-h-screen bg-[#0F0F23] text-white overflow-x-hidden w-full">
             {/* Admin Navbar */}
             <nav className="border-b border-white/10 bg-[#0F0F23]/80 backdrop-blur-md sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F43F5E] to-[#7C3AED] flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.5)]">
                             <TerminalSquare className="w-4 h-4 text-white" />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-white">NEXUS<span className="text-[#F43F5E]">.Admin</span></span>
+                        <span className="text-xl font-bold tracking-tight text-white hidden sm:block">NEXUS<span className="text-[#F43F5E]">.Admin</span></span>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 sm:gap-6">
                         {/* Notification Bell */}
                         <div className="relative">
                             <button
                                 onClick={() => setShowNotifications(!showNotifications)}
-                                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors relative"
+                                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors relative"
                             >
-                                <Bell className={`w-5 h-5 ${unreadCount > 0 ? 'text-[#06B6D4] animate-pulse' : 'text-slate-300'}`} />
+                                <Bell className={`w-4 h-4 sm:w-5 sm:h-5 ${unreadCount > 0 ? 'text-[#06B6D4] animate-pulse' : 'text-slate-300'}`} />
                                 {unreadCount > 0 && (
-                                    <span className="absolute top-0 right-0 w-3 h-3 bg-[#F43F5E] rounded-full border-2 border-[#0F0F23]"></span>
+                                    <span className="absolute top-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#F43F5E] rounded-full border-2 border-[#0F0F23]"></span>
                                 )}
                             </button>
 
                             {/* Notification Dropdown */}
                             {showNotifications && (
-                                <div className="absolute right-0 mt-3 w-80 glass-card rounded-2xl shadow-2xl overflow-hidden animate-fade-in z-50">
+                                <div className="absolute right-0 sm:-right-4 mt-3 w-72 sm:w-80 glass-card rounded-2xl shadow-2xl overflow-hidden animate-fade-in z-50">
                                     <div className="p-4 border-b border-white/10 bg-white/5">
-                                        <h3 className="font-semibold">Recent Alerts</h3>
+                                        <h3 className="font-semibold text-sm sm:text-base">Recent Alerts</h3>
                                     </div>
-                                    <div className="max-h-80 overflow-y-auto">
+                                    <div className="max-h-[60vh] sm:max-h-80 overflow-y-auto">
                                         {notifications.length === 0 ? (
                                             <div className="p-6 text-center text-slate-500 text-sm">No new notifications.</div>
                                         ) : (
@@ -138,7 +138,7 @@ export default function AdminDashboard() {
                                                     <div className={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${!n.read ? 'bg-[#06B6D4] shadow-[0_0_8px_#06B6D4]' : 'bg-transparent border border-slate-600'}`} />
                                                     <div>
                                                         <p className="text-sm font-medium text-slate-200">{n.message}</p>
-                                                        <p className="text-xs text-slate-500 mt-1">{new Date(n.created_at).toLocaleTimeString()}</p>
+                                                        <p className="text-[10px] sm:text-xs text-slate-500 mt-1">{new Date(n.created_at).toLocaleTimeString()}</p>
                                                     </div>
                                                 </div>
                                             ))
@@ -148,22 +148,23 @@ export default function AdminDashboard() {
                             )}
                         </div>
 
-                        <button onClick={() => setShowSettings(true)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors relative">
-                            <Settings className="w-5 h-5 text-slate-300 hover:text-[#06B6D4] transition-colors" />
+                        <button onClick={() => setShowSettings(true)} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors relative">
+                            <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-slate-300 hover:text-[#06B6D4] transition-colors" />
                         </button>
 
-                        <button onClick={handleSignOut} className="px-4 py-2 rounded-lg bg-[#F43F5E]/10 text-[#F43F5E] hover:bg-[#F43F5E]/20 transition-all text-sm font-medium flex items-center gap-2">
-                            <LogOut className="w-4 h-4" /> Sign Out
+                        <button onClick={handleSignOut} className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-[#F43F5E]/10 text-[#F43F5E] hover:bg-[#F43F5E]/20 transition-all text-sm font-medium flex items-center gap-2">
+                            <LogOut className="w-4 h-4" />
+                            <span className="hidden sm:inline">Sign Out</span>
                         </button>
                     </div>
                 </div>
             </nav>
 
-            <div className="max-w-7xl mx-auto px-6 py-12">
-                <h1 className="text-3xl font-bold mb-8">Client Projects Overview</h1>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 w-full">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Client Projects Overview</h1>
 
-                <div className="glass-card rounded-3xl overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[800px]">
+                <div className="glass-card rounded-2xl overflow-x-auto max-w-full border border-white/10 shadow-lg">
+                    <table className="w-full text-left border-collapse min-w-[800px] sm:min-w-[1000px]">
                         <thead>
                             <tr className="border-b border-white/10 bg-white/5 text-xs sm:text-sm uppercase tracking-wider text-slate-400">
                                 <th className="p-4 sm:p-6 font-medium">Client Info</th>
