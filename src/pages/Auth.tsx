@@ -53,11 +53,11 @@ export default function Auth() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0F0F23] flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-[#0F0F23] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-x-hidden">
             {/* Background glow effects */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7C3AED]/20 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-[#7C3AED]/20 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none" />
 
-            <div className="w-full max-w-md relative z-10 animate-fade-in-up">
+            <div className="w-full max-w-md relative z-10 animate-fade-in-up mt-8 sm:mt-0">
                 <Link to="/" className="flex items-center justify-center gap-2 mb-10 group">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] flex items-center justify-center group-hover:scale-105 transition-transform">
                         <TerminalSquare className="w-5 h-5 text-white" />

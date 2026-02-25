@@ -92,10 +92,10 @@ export default function Dashboard() {
     const unreadCount = notifications.filter(n => !n.read).length;
 
     return (
-        <div className="min-h-screen bg-[#0F0F23] text-white">
+        <div className="min-h-screen bg-[#0F0F23] text-white overflow-x-hidden w-full">
             {/* Top Navigation */}
             <nav className="border-b border-white/10 bg-white/5 backdrop-blur-md sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)] border border-white/10">
                             <TerminalSquare className="w-4 h-4 text-white" />
@@ -103,26 +103,26 @@ export default function Dashboard() {
                         <span className="text-xl font-bold tracking-tight text-white hidden sm:block">NEXUS<span className="text-[#06B6D4]">.</span></span>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 sm:gap-6">
                         {/* Notification Bell */}
                         <div className="relative">
                             <button
                                 onClick={() => setShowNotifications(!showNotifications)}
-                                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors relative"
+                                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors relative"
                             >
-                                <Bell className={`w-5 h-5 ${unreadCount > 0 ? 'text-[#06B6D4] animate-pulse' : 'text-slate-300'}`} />
+                                <Bell className={`w-4 h-4 sm:w-5 sm:h-5 ${unreadCount > 0 ? 'text-[#06B6D4] animate-pulse' : 'text-slate-300'}`} />
                                 {unreadCount > 0 && (
-                                    <span className="absolute top-0 right-0 w-3 h-3 bg-[#06B6D4] rounded-full border-2 border-[#0F0F23] shadow-[0_0_8px_#06B6D4]"></span>
+                                    <span className="absolute top-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#06B6D4] rounded-full border-2 border-[#0F0F23] shadow-[0_0_8px_#06B6D4]"></span>
                                 )}
                             </button>
 
                             {/* Notification Dropdown */}
                             {showNotifications && (
-                                <div className="absolute right-0 mt-3 w-80 glass-card rounded-2xl shadow-2xl overflow-hidden animate-fade-in z-50">
+                                <div className="absolute right-0 sm:-right-4 mt-3 w-72 sm:w-80 glass-card rounded-2xl shadow-2xl overflow-hidden animate-fade-in z-50">
                                     <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
                                         <h3 className="font-semibold text-white">Recent Updates</h3>
                                     </div>
-                                    <div className="max-h-80 overflow-y-auto">
+                                    <div className="max-h-[60vh] sm:max-h-80 overflow-y-auto">
                                         {notifications.length === 0 ? (
                                             <div className="p-6 text-center text-slate-500 text-sm">No new notifications.</div>
                                         ) : (
@@ -145,28 +145,28 @@ export default function Dashboard() {
                             )}
                         </div>
 
-                        <span className="text-sm text-slate-400 hidden sm:block">
+                        <span className="text-sm text-slate-400 hidden md:block">
                             {profile?.full_name} <span className="text-white">({profile?.company})</span>
                         </span>
                         <button
                             onClick={handleSignOut}
-                            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-sm font-medium flex items-center gap-2"
+                            className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-sm font-medium flex items-center gap-2"
                         >
                             <LogOut className="w-4 h-4 text-slate-300" />
-                            Sign Out
+                            <span className="hidden sm:inline">Sign Out</span>
                         </button>
                     </div>
                 </div>
             </nav>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-6 py-12">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 animate-fade-in-up">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade-in-up">
                     <div>
-                        <h1 className="text-3xl font-bold mb-2">Project Dashboard</h1>
-                        <p className="text-slate-400">Track and manage your digital initiatives.</p>
+                        <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Project Dashboard</h1>
+                        <p className="text-sm sm:text-base text-slate-400">Track and manage your digital initiatives.</p>
                     </div>
-                    <button onClick={() => navigate('/onboarding')} className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] font-medium text-white hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg shadow-[#7C3AED]/20 hover:scale-105 active:scale-95 duration-200">
+                    <button onClick={() => navigate('/onboarding')} className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] font-medium text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-[#7C3AED]/20 hover:scale-105 active:scale-95 duration-200">
                         <Plus className="w-5 h-5" />
                         New Request
                     </button>
@@ -211,9 +211,9 @@ export default function Dashboard() {
                                     <div className="flex flex-col">
                                         <span className="text-xs text-slate-500 mb-1">Status</span>
                                         <span className={`text-xs font-bold px-2.5 py-1 rounded-md transition-colors ${project.status === 'Pending Review' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]' :
-                                                project.status === 'Accepted' ? 'bg-[#06B6D4]/10 text-[#06B6D4] border border-[#06B6D4]/30 shadow-[0_0_10px_rgba(6,182,212,0.3)] hover:shadow-[0_0_15px_rgba(6,182,212,0.5)]' :
-                                                    project.status === 'Completed' ? 'bg-green-500/10 text-green-400 border border-green-500/30 shadow-[0_0_10px_rgba(34,197,94,0.2)]' :
-                                                        'bg-white/10 text-slate-300 border border-white/20'
+                                            project.status === 'Accepted' ? 'bg-[#06B6D4]/10 text-[#06B6D4] border border-[#06B6D4]/30 shadow-[0_0_10px_rgba(6,182,212,0.3)] hover:shadow-[0_0_15px_rgba(6,182,212,0.5)]' :
+                                                project.status === 'Completed' ? 'bg-green-500/10 text-green-400 border border-green-500/30 shadow-[0_0_10px_rgba(34,197,94,0.2)]' :
+                                                    'bg-white/10 text-slate-300 border border-white/20'
                                             }`}>
                                             {project.status || 'Pending Review'}
                                         </span>

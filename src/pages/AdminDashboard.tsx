@@ -162,39 +162,39 @@ export default function AdminDashboard() {
             <div className="max-w-7xl mx-auto px-6 py-12">
                 <h1 className="text-3xl font-bold mb-8">Client Projects Overview</h1>
 
-                <div className="glass-card rounded-3xl overflow-hidden">
-                    <table className="w-full text-left border-collapse">
+                <div className="glass-card rounded-3xl overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
-                            <tr className="border-b border-white/10 bg-white/5 text-sm uppercase tracking-wider text-slate-400">
-                                <th className="p-6 font-medium">Client Info</th>
-                                <th className="p-6 font-medium">Project Needs</th>
-                                <th className="p-6 font-medium">Budget</th>
-                                <th className="p-6 font-medium">Attachments</th>
-                                <th className="p-6 font-medium">Status Control</th>
+                            <tr className="border-b border-white/10 bg-white/5 text-xs sm:text-sm uppercase tracking-wider text-slate-400">
+                                <th className="p-4 sm:p-6 font-medium">Client Info</th>
+                                <th className="p-4 sm:p-6 font-medium">Project Needs</th>
+                                <th className="p-4 sm:p-6 font-medium">Budget</th>
+                                <th className="p-4 sm:p-6 font-medium">Attachments</th>
+                                <th className="p-4 sm:p-6 font-medium">Status Control</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {projects.map((project) => (
                                 <tr key={project.id} className="hover:bg-white/5 transition-colors">
-                                    <td className="p-6">
+                                    <td className="p-4 sm:p-6">
                                         <p className="font-semibold text-white">{project.profiles?.full_name}</p>
-                                        <p className="text-sm text-slate-400">{project.profiles?.company}</p>
-                                        {project.profiles?.email && <p className="text-xs text-[#06B6D4] mt-1 hover:text-white transition-colors">{project.profiles.email}</p>}
-                                        <p className="text-xs text-slate-500 mt-1">{new Date(project.created_at).toLocaleDateString()}</p>
+                                        <p className="text-xs sm:text-sm text-slate-400">{project.profiles?.company}</p>
+                                        {project.profiles?.email && <p className="text-[10px] sm:text-xs text-[#06B6D4] mt-1 hover:text-white transition-colors">{project.profiles.email}</p>}
+                                        <p className="text-[10px] sm:text-xs text-slate-500 mt-1">{new Date(project.created_at).toLocaleDateString()}</p>
                                     </td>
-                                    <td className="p-6">
-                                        <p className="font-medium text-[#7C3AED]">{project.project_type}</p>
-                                        <p className="text-sm text-slate-400 line-clamp-2 max-w-xs mt-1">{project.description}</p>
+                                    <td className="p-4 sm:p-6">
+                                        <p className="font-medium text-[#7C3AED] text-sm">{project.project_type}</p>
+                                        <p className="text-xs sm:text-sm text-slate-400 line-clamp-3 max-w-[200px] sm:max-w-xs mt-1">{project.description}</p>
                                     </td>
-                                    <td className="p-6 text-sm font-medium">
+                                    <td className="p-4 sm:p-6 text-xs sm:text-sm font-medium">
                                         {project.budget_range}
                                     </td>
-                                    <td className="p-6">
+                                    <td className="p-4 sm:p-6">
                                         {project.files_url?.length > 0 ? (
                                             <div className="flex flex-col gap-2">
                                                 {project.files_url.map((url: string, i: number) => (
-                                                    <a key={i} href={url} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs text-[#06B6D4] hover:text-white transition-colors">
-                                                        <Download className="w-3 h-3" /> File {i + 1}
+                                                    <a key={i} href={url} target="_blank" rel="noreferrer" className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-[#06B6D4] hover:text-white transition-colors">
+                                                        <Download className="w-3 h-3 flex-shrink-0" /> File {i + 1}
                                                     </a>
                                                 ))}
                                             </div>
@@ -202,11 +202,11 @@ export default function AdminDashboard() {
                                             <span className="text-xs text-slate-500">No files</span>
                                         )}
                                     </td>
-                                    <td className="p-6">
+                                    <td className="p-4 sm:p-6">
                                         <select
                                             value={project.status}
                                             onChange={(e) => updateStatus(project.id, e.target.value, project.user_id)}
-                                            className="bg-[#0F0F23] border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#7C3AED] cursor-pointer"
+                                            className="bg-[#0F0F23] border border-white/20 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-[#7C3AED] cursor-pointer min-w-[120px]"
                                         >
                                             <option value="Pending Review">Pending Review</option>
                                             <option value="Accepted">Accepted</option>
