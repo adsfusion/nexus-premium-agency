@@ -5,15 +5,18 @@ import { TerminalSquare, LogOut, Bell, Download, Settings, X } from 'lucide-reac
 
 export default function AdminDashboard() {
     const [projects, setProjects] = useState<any[]>([]);
+    const [clients, setClients] = useState<any[]>([]);
     const [notifications, setNotifications] = useState<any[]>([]);
     const [showNotifications, setShowNotifications] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [passwordMsg, setPasswordMsg] = useState('');
+    const [activeTab, setActiveTab] = useState<'projects' | 'clients'>('projects');
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchAdminData();
+        fetchClients();
 
         // Realtime Subscriptions
         const projectsSub = supabase.channel('public:projects')
@@ -28,9 +31,16 @@ export default function AdminDashboard() {
             })
             .subscribe();
 
+        const clientsSub = supabase.channel('public:profiles')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+                fetchClients();
+            })
+            .subscribe();
+
         return () => {
             supabase.removeChannel(projectsSub);
             supabase.removeChannel(notifSub);
+            supabase.removeChannel(clientsSub);
         };
     }, []);
 
@@ -46,6 +56,16 @@ export default function AdminDashboard() {
 
         if (projectsData) setProjects(projectsData);
         fetchNotifications();
+    };
+
+    const fetchClients = async () => {
+        const { data } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('is_admin', false)
+            .order('created_at', { ascending: false });
+
+        if (data) setClients(data);
     };
 
     const fetchNotifications = async () => {
@@ -161,71 +181,129 @@ export default function AdminDashboard() {
             </nav>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 w-full">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Client Projects Overview</h1>
-
-                <div className="glass-card rounded-2xl overflow-x-auto max-w-full border border-white/10 shadow-lg">
-                    <table className="w-full text-left border-collapse min-w-[800px] sm:min-w-[1000px]">
-                        <thead>
-                            <tr className="border-b border-white/10 bg-white/5 text-xs sm:text-sm uppercase tracking-wider text-slate-400">
-                                <th className="p-4 sm:p-6 font-medium">Client Info</th>
-                                <th className="p-4 sm:p-6 font-medium">Project Needs</th>
-                                <th className="p-4 sm:p-6 font-medium">Budget</th>
-                                <th className="p-4 sm:p-6 font-medium">Attachments</th>
-                                <th className="p-4 sm:p-6 font-medium">Status Control</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/5">
-                            {projects.map((project) => (
-                                <tr key={project.id} className="hover:bg-white/5 transition-colors">
-                                    <td className="p-4 sm:p-6">
-                                        <p className="font-semibold text-white">{project.profiles?.full_name}</p>
-                                        <p className="text-xs sm:text-sm text-slate-400">{project.profiles?.company}</p>
-                                        {project.profiles?.email && <p className="text-[10px] sm:text-xs text-[#06B6D4] mt-1 hover:text-white transition-colors">{project.profiles.email}</p>}
-                                        <p className="text-[10px] sm:text-xs text-slate-500 mt-1">{new Date(project.created_at).toLocaleDateString()}</p>
-                                    </td>
-                                    <td className="p-4 sm:p-6">
-                                        <p className="font-medium text-[#7C3AED] text-sm">{project.project_type}</p>
-                                        <p className="text-xs sm:text-sm text-slate-400 line-clamp-3 max-w-[200px] sm:max-w-xs mt-1">{project.description}</p>
-                                    </td>
-                                    <td className="p-4 sm:p-6 text-xs sm:text-sm font-medium">
-                                        {project.budget_range}
-                                    </td>
-                                    <td className="p-4 sm:p-6">
-                                        {project.files_url?.length > 0 ? (
-                                            <div className="flex flex-col gap-2">
-                                                {project.files_url.map((url: string, i: number) => (
-                                                    <a key={i} href={url} target="_blank" rel="noreferrer" className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-[#06B6D4] hover:text-white transition-colors">
-                                                        <Download className="w-3 h-3 flex-shrink-0" /> File {i + 1}
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <span className="text-xs text-slate-500">No files</span>
-                                        )}
-                                    </td>
-                                    <td className="p-4 sm:p-6">
-                                        <select
-                                            value={project.status}
-                                            onChange={(e) => updateStatus(project.id, e.target.value, project.user_id)}
-                                            className="bg-[#0F0F23] border border-white/20 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-[#7C3AED] cursor-pointer min-w-[120px]"
-                                        >
-                                            <option value="Pending Review">Pending Review</option>
-                                            <option value="Accepted">Accepted</option>
-                                            <option value="Completed">Completed</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                            ))}
-                            {projects.length === 0 && (
-                                <tr>
-                                    <td colSpan={5} className="p-12 text-center text-slate-500">
-                                        No active projects found.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+                    <h1 className="text-2xl sm:text-3xl font-bold">Admin Portal</h1>
+                    <div className="flex bg-[#0F0F23] border border-white/10 rounded-xl p-1 gap-1">
+                        <button
+                            onClick={() => setActiveTab('projects')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'projects' ? 'bg-white/10 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                        >
+                            Project Requests
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('clients')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'clients' ? 'bg-white/10 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                        >
+                            Registered Clients ({clients.length})
+                        </button>
+                    </div>
                 </div>
+
+                {activeTab === 'projects' ? (
+                    <div className="glass-card rounded-2xl overflow-x-auto max-w-full border border-white/10 shadow-lg animate-fade-in">
+                        <table className="w-full text-left border-collapse min-w-[800px] sm:min-w-[1000px]">
+                            <thead>
+                                <tr className="border-b border-white/10 bg-white/5 text-xs sm:text-sm uppercase tracking-wider text-slate-400">
+                                    <th className="p-4 sm:p-6 font-medium">Client Info</th>
+                                    <th className="p-4 sm:p-6 font-medium">Project Needs</th>
+                                    <th className="p-4 sm:p-6 font-medium">Budget</th>
+                                    <th className="p-4 sm:p-6 font-medium">Attachments</th>
+                                    <th className="p-4 sm:p-6 font-medium">Status Control</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {projects.map((project) => (
+                                    <tr key={project.id} className="hover:bg-white/5 transition-colors">
+                                        <td className="p-4 sm:p-6">
+                                            <p className="font-semibold text-white">{project.profiles?.full_name}</p>
+                                            <p className="text-xs sm:text-sm text-slate-400">{project.profiles?.company}</p>
+                                            {project.profiles?.email && <p className="text-[10px] sm:text-xs text-[#06B6D4] mt-1 hover:text-white transition-colors">{project.profiles.email}</p>}
+                                            <p className="text-[10px] sm:text-xs text-slate-500 mt-1">{new Date(project.created_at).toLocaleDateString()}</p>
+                                        </td>
+                                        <td className="p-4 sm:p-6">
+                                            <p className="font-medium text-[#7C3AED] text-sm">{project.project_type}</p>
+                                            <p className="text-xs sm:text-sm text-slate-400 line-clamp-3 max-w-[200px] sm:max-w-xs mt-1">{project.description}</p>
+                                        </td>
+                                        <td className="p-4 sm:p-6 text-xs sm:text-sm font-medium">
+                                            {project.budget_range}
+                                        </td>
+                                        <td className="p-4 sm:p-6">
+                                            {project.files_url?.length > 0 ? (
+                                                <div className="flex flex-col gap-2">
+                                                    {project.files_url.map((url: string, i: number) => (
+                                                        <a key={i} href={url} target="_blank" rel="noreferrer" className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-[#06B6D4] hover:text-white transition-colors">
+                                                            <Download className="w-3 h-3 flex-shrink-0" /> File {i + 1}
+                                                        </a>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <span className="text-xs text-slate-500">No files</span>
+                                            )}
+                                        </td>
+                                        <td className="p-4 sm:p-6">
+                                            <select
+                                                value={project.status}
+                                                onChange={(e) => updateStatus(project.id, e.target.value, project.user_id)}
+                                                className="bg-[#0F0F23] border border-white/20 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-[#7C3AED] cursor-pointer min-w-[120px]"
+                                            >
+                                                <option value="Pending Review">Pending Review</option>
+                                                <option value="Accepted">Accepted</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {projects.length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="p-12 text-center text-slate-500">
+                                            No active projects found.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <div className="glass-card rounded-2xl overflow-x-auto max-w-full border border-white/10 shadow-lg animate-fade-in">
+                        <table className="w-full text-left border-collapse min-w-[600px] sm:min-w-[800px]">
+                            <thead>
+                                <tr className="border-b border-white/10 bg-white/5 text-xs sm:text-sm uppercase tracking-wider text-slate-400">
+                                    <th className="p-4 sm:p-6 font-medium">Registered Client</th>
+                                    <th className="p-4 sm:p-6 font-medium">Company</th>
+                                    <th className="p-4 sm:p-6 font-medium">Contact Email</th>
+                                    <th className="p-4 sm:p-6 font-medium">Join Date</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {clients.map((client) => (
+                                    <tr key={client.id} className="hover:bg-white/5 transition-colors">
+                                        <td className="p-4 sm:p-6">
+                                            <p className="font-semibold text-white">{client.full_name}</p>
+                                        </td>
+                                        <td className="p-4 sm:p-6">
+                                            <p className="text-sm text-slate-300">{client.company || 'N/A'}</p>
+                                        </td>
+                                        <td className="p-4 sm:p-6 text-sm">
+                                            <a href={`mailto:${client.email}`} className="text-[#06B6D4] hover:text-white transition-colors">
+                                                {client.email || 'N/A'}
+                                            </a>
+                                        </td>
+                                        <td className="p-4 sm:p-6 text-xs text-slate-500">
+                                            {new Date(client.created_at).toLocaleDateString()}
+                                        </td>
+                                    </tr>
+                                ))}
+                                {clients.length === 0 && (
+                                    <tr>
+                                        <td colSpan={4} className="p-12 text-center text-slate-500">
+                                            No clients registered yet.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
             {/* Settings Modal */}
