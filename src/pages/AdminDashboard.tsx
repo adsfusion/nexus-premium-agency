@@ -57,8 +57,14 @@ export default function AdminDashboard() {
         if (data) setNotifications(data);
     };
 
-    const updateStatus = async (projectId: string, newStatus: string) => {
+    const updateStatus = async (projectId: string, newStatus: string, userId: string) => {
         await supabase.from('projects').update({ status: newStatus }).eq('id', projectId);
+
+        // Notify the user about the status change
+        await supabase.from('notifications').insert({
+            user_id: userId,
+            message: `Your project status has been updated to: ${newStatus}`
+        });
     };
 
     const markNotifRead = async (id: string) => {
@@ -199,11 +205,11 @@ export default function AdminDashboard() {
                                     <td className="p-6">
                                         <select
                                             value={project.status}
-                                            onChange={(e) => updateStatus(project.id, e.target.value)}
+                                            onChange={(e) => updateStatus(project.id, e.target.value, project.user_id)}
                                             className="bg-[#0F0F23] border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#7C3AED] cursor-pointer"
                                         >
                                             <option value="Pending Review">Pending Review</option>
-                                            <option value="In Progress">In Progress</option>
+                                            <option value="Accepted">Accepted</option>
                                             <option value="Completed">Completed</option>
                                         </select>
                                     </td>

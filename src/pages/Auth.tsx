@@ -131,12 +131,31 @@ export default function Auth() {
                         </button>
                     </form>
 
-                    <div className="mt-8 text-center">
+                    <div className="mt-8 text-center flex flex-col gap-4">
                         <button
                             onClick={() => setIsLogin(!isLogin)}
                             className="text-sm text-slate-400 hover:text-white transition-colors"
                         >
                             {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                setEmail('admin');
+                                setPassword('admin');
+                                setIsLogin(true);
+                                // A slight timeout to let state update, though handleAuth uses the state.
+                                // It's better to just directly navigate or call the auth with admin credentials
+                                setTimeout(() => {
+                                    const formEvent = { preventDefault: () => { } } as React.FormEvent;
+                                    handleAuth(formEvent);
+                                }, 100);
+                            }}
+                            className="text-xs font-semibold text-[#06B6D4] hover:text-white transition-colors bg-[#06B6D4]/10 py-2 px-4 rounded-full border border-[#06B6D4]/20 mx-auto"
+                        >
+                            <TerminalSquare className="w-3 h-3 inline mr-1" />
+                            Login as Admin
                         </button>
                     </div>
                 </div>
