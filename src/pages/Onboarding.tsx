@@ -56,7 +56,8 @@ export default function Onboarding() {
             const { error: profileError } = await supabase.from('profiles').insert({
                 id: user.id,
                 full_name: fullName,
-                company: company
+                company: company,
+                email: user.email
             });
             if (profileError) throw profileError;
 

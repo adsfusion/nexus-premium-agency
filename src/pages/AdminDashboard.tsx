@@ -40,7 +40,7 @@ export default function AdminDashboard() {
             .from('projects')
             .select(`
         *,
-        profiles (full_name, company)
+        profiles (full_name, company, email)
       `)
             .order('created_at', { ascending: false });
 
@@ -173,6 +173,7 @@ export default function AdminDashboard() {
                                     <td className="p-6">
                                         <p className="font-semibold text-white">{project.profiles?.full_name}</p>
                                         <p className="text-sm text-slate-400">{project.profiles?.company}</p>
+                                        {project.profiles?.email && <p className="text-xs text-[#06B6D4] mt-1 hover:text-white transition-colors">{project.profiles.email}</p>}
                                         <p className="text-xs text-slate-500 mt-1">{new Date(project.created_at).toLocaleDateString()}</p>
                                     </td>
                                     <td className="p-6">
